@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# This script displays information about subdomains for a given domain
+
+if [ "$#" -lt 1 ]; then
+    echo "Usage: $0 <domain> [subdomain]"
+    exit 1
+fi
+
+domain="$1"
+subdomains=("www" "54.90.99.15" "52.90.154.18" "18.212.203.184")
+
+if [ "$#" -eq 2 ]; then
+    subdomains=("$2")
+fi
+
+for subdomain in "${subdomains[@]}"; do
+    result=$(dig "${subdomain}.${domain}" +short)
+    if [ -n "$result" ]; then
+        record_type=$(dig "${subdomain}.${domain}" | awk '/ANSWER SECTION:/ {getline; print $4}')
+        echo "The subdomain ${subdomain} is a ${record_type} record and points to ${result}"
+    fi
+done

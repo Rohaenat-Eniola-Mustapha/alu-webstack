@@ -1,0 +1,14 @@
+# /etc/haproxy/haproxy.cfg
+
+frontend www-frontend
+    bind *:80
+    bind *:443 ssl crt /etc/ssl/certs/holberton.online.pem
+    mode http
+    redirect scheme https code 301 if !{ ssl_fc }
+    acl is_holberton hdr_end(host) -i www.holberton.online
+    use_backend holberton-backend if is_holberton
+
+backend holberton-backend
+    mode http
+    server 52.90.154.18 10.0.0.1:80 check
+    server 18.212.203.184 10.0.0.2:80 check
